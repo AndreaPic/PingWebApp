@@ -41,7 +41,7 @@ namespace PingWebApp.Controllers
                 string endpoint = string.Empty;
                 if (pongBaseAddress != null)
                 {
-                    endpoint = $"{pongBaseAddress}/api/Pong/Pong";
+                    endpoint = $"{pongBaseAddress}api/Pong/Pong";
                 }
 
                 var httpRequestMessage = new HttpRequestMessage(
@@ -55,7 +55,7 @@ namespace PingWebApp.Controllers
                 {
                     httpClient.Timeout = TimeSpan.FromMilliseconds(timeout);
                 }
-
+                    
                 var httpResponseMessage = await httpClient.SendAsync(httpRequestMessage);
 
                 if (httpResponseMessage.IsSuccessStatusCode)
