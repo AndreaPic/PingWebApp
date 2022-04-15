@@ -9,14 +9,15 @@ namespace PingWebApp.Controllers
     public class PingController : ControllerBase
     {
         private static int callNumber = 0;
-
+        private IConfigurationRoot ConfigRoot;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger _logger;
 
-        public PingController(IHttpClientFactory httpClientFactory, ILogger<PingController> logger)
+        public PingController(IHttpClientFactory httpClientFactory, IConfiguration configRoot, ILogger<PingController> logger)
         {
             _logger = logger;
-            _httpClientFactory = httpClientFactory; 
+            _httpClientFactory = httpClientFactory;
+            ConfigRoot = (IConfigurationRoot)configRoot;
         }
 
         [HttpGet("Ping")]
@@ -25,20 +26,24 @@ namespace PingWebApp.Controllers
             Interlocked.Increment(ref callNumber);
             _logger.LogInformation($"Ping call number: {callNumber}");
 
-            //await Task.Delay(11000);
-            await Task.Delay(1000);
+            int delay = ConfigRoot.GetValue<int>("DelayMS", 0);
+
+            if (delay > 0)
+            {
+                await Task.Delay(delay);
+            }
 
             string ret = string.Empty;
 
-            var httpRequestMessage = new HttpRequestMessage(
+            try
+            {
+                var httpRequestMessage = new HttpRequestMessage(
                                 HttpMethod.Get,
                                 "https://localhost:7244/api/Pong/Pong");
 
-            var httpClient = _httpClientFactory.CreateClient();
-            httpClient.Timeout = TimeSpan.FromSeconds(10);
+                var httpClient = _httpClientFactory.CreateClient();
+                httpClient.Timeout = TimeSpan.FromSeconds(10);
 
-            try
-            {
                 var httpResponseMessage = await httpClient.SendAsync(httpRequestMessage);
 
                 if (httpResponseMessage.IsSuccessStatusCode)
