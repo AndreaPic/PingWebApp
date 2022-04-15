@@ -62,5 +62,21 @@ jobs:
           app-name: ${{ env.app-name }}          
           package: website
 
+      - name: Update config
+        uses: Azure/appservice-settings@v1
+        with:
+          app-name: ${{ env.app-name }}
+          app-settings-json: |
+            [
+                {
+                    "name": "DelayMS",
+                    "value": "${{ secrets.DELAYMS }}",
+                },
+                {
+                    "name": "PongBaseAddress",
+                    "value": "${{ secrets.PONGBASEADDRESS }}",
+                }
+            ]
+
       - name: az cli logout
         run: az logout
