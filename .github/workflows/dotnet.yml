@@ -71,10 +71,12 @@ jobs:
                 {
                     "name": "DelayMS",
                     "value": "${{ secrets.DELAYMS }}",
+                    "slotSetting": false
                 },
                 {
                     "name": "PongBaseAddress",
                     "value": "${{ secrets.PONGBASEADDRESS }}",
+                    "slotSetting": false
                 }
             ]
 
