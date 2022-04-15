@@ -60,11 +60,11 @@ namespace PingWebApp.Controllers
 
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
-                    ret = $"Pong Call Number: {callNumber} - Ping Response: " + await httpResponseMessage.Content.ReadAsStringAsync();
+                    ret = $"Ping Call Number: {callNumber} - Pong Response: " + await httpResponseMessage.Content.ReadAsStringAsync();
                 }
                 else
                 {
-                    ret = $"Call To Ping Return Status Code: {httpResponseMessage.StatusCode}";
+                    ret = $"Call To Pong Return Status Code: {httpResponseMessage.StatusCode}";
                 }
             }
             catch (Exception ex)
