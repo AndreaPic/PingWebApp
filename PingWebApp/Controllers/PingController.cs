@@ -23,26 +23,38 @@ namespace PingWebApp.Controllers
         [HttpGet("Ping")]
         public async Task<IActionResult> Ping()
         {
+            string ret = string.Empty;
+
             Interlocked.Increment(ref callNumber);
             _logger.LogInformation($"Ping call number: {callNumber}");
 
-            int delay = ConfigRoot.GetValue<int>("DelayMS", 0);
-
-            if (delay > 0)
-            {
-                await Task.Delay(delay);
-            }
-
-            string ret = string.Empty;
-
             try
             {
+                int delay = ConfigRoot.GetValue<int>("DelayMS", 0);
+
+                if (delay > 0)
+                {
+                    await Task.Delay(delay);
+                }
+               
+                string pongBaseAddress = ConfigRoot.GetValue<string>("PongBaseAddress");
+                string endpoint = string.Empty;
+                if (pongBaseAddress != null)
+                {
+                    endpoint = $"{pongBaseAddress}/api/Pong/Pong";
+                }
+
                 var httpRequestMessage = new HttpRequestMessage(
                                 HttpMethod.Get,
-                                "https://localhost:7244/api/Pong/Pong");
+                                endpoint);
 
                 var httpClient = _httpClientFactory.CreateClient();
-                httpClient.Timeout = TimeSpan.FromSeconds(10);
+                int timeout = ConfigRoot.GetValue<int>("TimeoutMS", 0);
+
+                if (timeout > 0)
+                {
+                    httpClient.Timeout = TimeSpan.FromSeconds(timeout);
+                }
 
                 var httpResponseMessage = await httpClient.SendAsync(httpRequestMessage);
 
