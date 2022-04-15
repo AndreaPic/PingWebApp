@@ -53,7 +53,7 @@ namespace PingWebApp.Controllers
 
                 if (timeout > 0)
                 {
-                    httpClient.Timeout = TimeSpan.FromSeconds(timeout);
+                    httpClient.Timeout = TimeSpan.FromMilliseconds(timeout);
                 }
 
                 var httpResponseMessage = await httpClient.SendAsync(httpRequestMessage);
