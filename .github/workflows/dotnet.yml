@@ -77,7 +77,12 @@ jobs:
                     "name": "PongBaseAddress",
                     "value": "${{ secrets.PONGBASEADDRESS }}",
                     "slotSetting": false
-                }
+                },
+                {
+                    "name": "TimeoutMS",
+                    "value": "${{ secrets.TIMEOUTMS }}",
+                    "slotSetting": false
+                }                
             ]
 
       - name: az cli logout
