@@ -88,6 +88,11 @@ jobs:
                     "name": "TimeoutMS",
                     "value": "${{ secrets.TIMEOUTMS }}",
                     "slotSetting": false
+                },
+                {
+                    "name": "MemoryAllocation",
+                    "value": "${{ secrets.MEMORYALLOCATION }}",
+                    "slotSetting": false
                 }                
             ]
 
