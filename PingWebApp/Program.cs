@@ -4,10 +4,10 @@ using PingWebApp;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddHttpContextAccessor().AddLogging().AddHttpClient();
+//builder.Services.AddHttpContextAccessor().AddLogging().AddHttpClient();
 
 //Line below activate distributed loop detection
-//builder.Services.AddDistributedLoopDetector(); // <-----
+builder.Services.AddDistributedLoopDetector(); // <-----
 
 builder.Services.AddControllersWithViews(options =>
 {
