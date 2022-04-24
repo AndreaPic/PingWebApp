@@ -18,14 +18,14 @@ builder.Services.AddControllers();
 builder.Services.AddRazorPages();
 
 //uncomment code below to use distributed cache for loop detection
-/*
+
 builder.Services.AddDistributedMemoryCache(); // <-----
 builder.Services.AddStackExchangeRedisCache(options => // <-----
 { 
     options.Configuration = builder.Configuration.GetConnectionString("DistributedLoopRedisConStr");
     options.InstanceName = "redis-dloopd-dev-weu-001";
 });
-*/
+
 
 var app = builder.Build();
 
@@ -39,7 +39,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 //uncomment line below to use distributed cache for loop detection
-//app.UseDistributedCacheForLoopDetector("andrea-dev-italy-ping"); // <-----
+app.UseDistributedCacheForLoopDetector("andrea-dev-italy-ping"); // <-----
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
