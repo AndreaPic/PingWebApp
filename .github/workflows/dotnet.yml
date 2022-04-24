@@ -95,6 +95,14 @@ jobs:
                     "slotSetting": false
                 }                
             ]
-
+          connection-strings-json:  |
+            [
+                {
+                    "name": "DistributedLoopRedisConStr",
+                    "value": "${{ secrets.REDISCONNSTR }}",
+                    "type": "Custom",
+                    "slotSetting": false
+                }  
+            ]
       - name: az cli logout
         run: az logout
