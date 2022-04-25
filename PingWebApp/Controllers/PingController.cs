@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Concurrent;
 using System.Text;
+using SPS.DistributedLoopDetector.Extensions;
 
 namespace PingWebApp.Controllers
 {
@@ -31,12 +32,14 @@ namespace PingWebApp.Controllers
         private IConfigurationRoot ConfigRoot;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger _logger;
+        IHttpContextAccessor httpContextAccessor;
 
-        public PingController(IHttpClientFactory httpClientFactory, IConfiguration configRoot, ILogger<PingController> logger)
+        public PingController(IHttpClientFactory httpClientFactory, IConfiguration configRoot, ILogger<PingController> logger, IHttpContextAccessor contextAccessor)
         {
             _logger = logger;
             _httpClientFactory = httpClientFactory;
             ConfigRoot = (IConfigurationRoot)configRoot;
+            httpContextAccessor = contextAccessor;
         }
 
         [HttpGet("Ping")]
@@ -141,6 +144,68 @@ namespace PingWebApp.Controllers
 
             return result;
         }
+
+        [HttpGet("Pang")]
+        public async Task<IActionResult> Pang()
+        {
+            string ret = string.Empty;
+
+            Interlocked.Increment(ref callNumber);
+            _logger.LogInformation($"Pang call number: {callNumber}");
+
+            try
+            {
+
+                int mallocQty = ConfigRoot.GetValue<int>("MemoryAllocation", 0);
+                var s = MemoryAllocation(mallocQty);
+
+                int delay = ConfigRoot.GetValue<int>("DelayMS", 0);
+
+                if (delay > 0)
+                {
+                    await Task.Delay(delay);
+                }
+
+                string pongBaseAddress = ConfigRoot.GetValue<string>("PongBaseAddress");
+                string endpoint = string.Empty;
+                if (pongBaseAddress != null)
+                {
+                    endpoint = $"{pongBaseAddress}api/Pong/Peng";
+                }
+
+                var httpRequestMessage = new HttpRequestMessage(
+                                HttpMethod.Get,
+                                endpoint);
+
+                HttpClient httpClient = new HttpClient();
+
+                int timeout = ConfigRoot.GetValue<int>("TimeoutMS", 0);
+
+                if (timeout > 0)
+                {
+                    httpClient.Timeout = TimeSpan.FromMilliseconds(timeout);
+                }
+
+                var httpResponseMessage = await httpClient.SendDLoopDAsync(httpRequestMessage, httpContextAccessor);
+
+                if (httpResponseMessage.IsSuccessStatusCode)
+                {
+                    ret = $"Pang Call Number: {callNumber} - Peng Response: " + await httpResponseMessage.Content.ReadAsStringAsync();
+                }
+                else
+                {
+                    ret = $"Call To Peng Return Status Code: {httpResponseMessage.StatusCode}";
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return Ok(ex.Message);
+            }
+
+            return Ok(ret);
+        }
+
 
     }
 }
