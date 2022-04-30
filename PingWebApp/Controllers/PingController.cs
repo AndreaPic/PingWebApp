@@ -177,7 +177,8 @@ namespace PingWebApp.Controllers
                                 HttpMethod.Get,
                                 endpoint);
 
-                HttpClient httpClient = new HttpClient();
+                var httpClient = _httpClientFactory.CreateClient();
+                //HttpClient httpClient = new HttpClient(); //this is an alternative without HttpClientFactory
 
                 int timeout = ConfigRoot.GetValue<int>("TimeoutMS", 0);
 
@@ -186,7 +187,8 @@ namespace PingWebApp.Controllers
                     httpClient.Timeout = TimeSpan.FromMilliseconds(timeout);
                 }
 
-                var httpResponseMessage = await httpClient.SendDLoopDAsync(httpRequestMessage, httpContextAccessor);
+                var httpResponseMessage = await httpClient.SendAsync(httpRequestMessage);
+                //var httpResponseMessage = await httpClient.SendDLoopDAsync(httpRequestMessage, httpContextAccessor); //this is an alternative without HttpClientFactory
 
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
